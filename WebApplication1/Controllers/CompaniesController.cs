@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -9,15 +10,40 @@ namespace WebApplication1.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly DbConfig config;
+        private readonly IService service;
+        private readonly TransientService tservice;
+        private readonly ScopedService sservice;
+        private readonly SingletonService stservice;
 
-        public CompaniesController(DbConfig config)
+        public CompaniesController(DbConfig config, IService service, TransientService tservice, ScopedService sservice, SingletonService stservice)
         {
             this.config = config;
+            this.service = service;
+            this.tservice = tservice;
+            this.sservice = sservice;
+            this.stservice = stservice;
         }
+
+        [HttpGet("GUID")]
+        public ActionResult getGuids()
+        {
+            return Ok(new
+            {
+                CompaniesControllerTransient = tservice.Guid,
+                ServiceA_t=service.getTransient(),
+                CompaniesControllerScoped = sservice.Guid,
+                ServiceA_sc = service.getScoped(),
+                CompaniesControllerSingletone = stservice.Guid,
+                ServiceA_sn = service.getSingletone(),
+
+            });
+        }
+       
 
         [HttpGet]
         public async Task<ActionResult<List<Company>>> Get()
         {
+            service.MakeWork();
             return await config.Companies.Include(x=>x.Games).ToListAsync();
         }
 
