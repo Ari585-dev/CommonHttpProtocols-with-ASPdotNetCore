@@ -14,14 +14,17 @@ namespace WebApplication1.Controllers
         private readonly TransientService tservice;
         private readonly ScopedService sservice;
         private readonly SingletonService stservice;
+        private readonly ILogger<CompaniesController> logger;
 
-        public CompaniesController(DbConfig config, IService service, TransientService tservice, ScopedService sservice, SingletonService stservice)
+        public CompaniesController(DbConfig config, IService service, TransientService tservice, ScopedService sservice, SingletonService stservice,
+            ILogger<CompaniesController>logger)
         {
             this.config = config;
             this.service = service;
             this.tservice = tservice;
             this.sservice = sservice;
             this.stservice = stservice;
+            this.logger = logger;
         }
 
         [HttpGet("GUID")]
@@ -43,6 +46,7 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Company>>> Get()
         {
+            logger.LogInformation("Estamos obteniendo los autores");
             service.MakeWork();
             return await config.Companies.Include(x=>x.Games).ToListAsync();
         }

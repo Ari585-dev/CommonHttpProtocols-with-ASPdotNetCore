@@ -34,11 +34,17 @@ namespace WebApplication1
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.Run(async context =>
+            {
+                await context.Response.WriteAsync("Ejecución finalizada");
+            });
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
 
             app.UseHttpsRedirection();
 
