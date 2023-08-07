@@ -44,6 +44,7 @@ namespace WebApplication1.Controllers
        
 
         [HttpGet]
+        [ResponseCache(Duration = 10)]
         public async Task<ActionResult<List<Company>>> Get()
         {
             logger.LogInformation("Estamos obteniendo los autores");
