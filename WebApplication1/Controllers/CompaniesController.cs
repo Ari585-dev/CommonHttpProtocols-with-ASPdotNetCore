@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.Filters;
 using WebApplication1.Models;
 using WebApplication1.Services;
 
@@ -44,9 +45,11 @@ namespace WebApplication1.Controllers
        
 
         [HttpGet]
-        [ResponseCache(Duration = 10)]
+        // [ResponseCache(Duration = 10)]
+        [ServiceFilter(typeof(FilterAction))]
         public async Task<ActionResult<List<Company>>> Get()
         {
+            throw new NotImplementedException();
             logger.LogInformation("Estamos obteniendo los autores");
             service.MakeWork();
             return await config.Companies.Include(x=>x.Games).ToListAsync();

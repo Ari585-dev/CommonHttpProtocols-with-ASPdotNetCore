@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
+using WebApplication1.Filters;
 using WebApplication1.Middlewares;
 using WebApplication1.Services;
 
@@ -17,7 +18,10 @@ namespace WebApplication1
 
         public void ConfigureServices(IServiceCollection services) {
 
-            services.AddControllers().AddJsonOptions(x=>
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ExceptionFilter));
+            }).AddJsonOptions(x=>
             x.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles);//E s para no hacer ciclos cuando se relacionan tablas
             services.AddControllers();
             services.AddDbContext<DbConfig>(options =>
@@ -29,6 +33,8 @@ namespace WebApplication1
             services.AddTransient<TransientService>();
             services.AddScoped<ScopedService>();
             services.AddSingleton<SingletonService>();
+            services.AddTransient<FilterAction>();
+            services.AddHostedService<FileWritter>();
 
             services.AddResponseCaching();
 
